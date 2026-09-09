@@ -2,9 +2,16 @@
 
 This project contains source code and supporting files for a serverless application that you can deploy with the SAM CLI. It includes the following files and folders.
 
-- hello_world - Code for the application's Lambda function.
-- events - Invocation events that you can use to invoke the function.
-- tests - Unit tests for the application code. 
+- grade_calculator - Code for the application's Lambda function. It has 2 lambda function file: 
+  -- 1. gradecalculator.py - which gets triggered with s3 events, whenever new file with student record is uploaded in s3
+  bucket, lambda functions gets triggered. It gets the records from event, and get the file contents
+  It then process the student record present in the file
+  - based on the testScore, it calculates the grade, >=80 Grade 'A' | >=60 Grade 'B' | <60: Grade 'C'
+  - it then publish message through SNS topic
+  -- 2. gradereceiver.py - this lambda gets triggered when SNS topic receives a message 
+    - it just logs the received message which has each student record with calculated Grade 
+    - it logs in CloudWatch
+- tests - This is not working code, provided with sam init command
 - template.yaml - A template that defines the application's AWS resources.
 
 The application uses several AWS resources, including Lambda functions and an API Gateway API. These resources are defined in the `template.yaml` file in this project. You can update the template to add AWS resources through the same deployment process that updates your application code.
