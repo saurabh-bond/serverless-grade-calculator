@@ -1,0 +1,20 @@
+[
+  {
+    "rollNo": 1,
+    "name": "Saurabh Kumar",
+    "testScore": 89,
+    "grade": ""
+  },
+  {
+    "rollNo": 2,
+    "name": "Student 2",
+    "testScore": 54,
+    "grade": ""
+  },
+  {
+    "rollNo": 3,
+    "name": "Student 3",
+    "testScore": 67,
+    "grade": ""
+  }
+]

@@ -1,0 +1,52 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  grade-calculator
+
+  Serverless application which calculates grade based on testScore and logs in CloudWatch
+
+Globals:
+  Function:
+    Runtime: python3.12
+    Timeout: 7
+  
+  
+Resources:
+  GradeCalculatorTopic:
+    Type: AWS::SNS::Topic
+  GradeCalculatorBucket: 
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub ${AWS::StackName}-${AWS::AccountId}-${AWS::Region}
+  GradeCalculatorFunction: 
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: grade_calculator/
+      Handler: gradecalculator.lambda_handler
+      Policies:
+        - S3ReadPolicy: 
+            BucketName: !Sub ${AWS::StackName}-${AWS::AccountId}-${AWS::Region}
+        - SNSPublishMessagePolicy:
+            TopicName: !GetAtt GradeCalculatorTopic.TopicName
+      Environment:
+        Variables:
+          GRADE_CALCULATOR_TOPIC: !Ref GradeCalculatorTopic
+      Events:
+        S3Events:
+          Type: S3
+          Properties:
+            Bucket: !Ref GradeCalculatorBucket
+            Events: s3:ObjectCreated:*
+  GradeReceiverFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: grade_calculator/
+      Handler: gradereceiver.lambda_handler
+      Events:
+        SNSEvent:
+          Type: SNS
+          Properties:
+            Topic: !Ref GradeCalculatorTopic
+
+
+
